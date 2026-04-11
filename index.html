@@ -57,10 +57,16 @@ nav{
 /* HERO */
 .hero{
   min-height:100vh;
-  display:flex;flex-direction:column;justify-content:center;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4rem;
+  align-items:center;
   padding:8rem 4rem 5rem;
   background:var(--cream);
   position:relative;
+}
+.hero-content{
+  display:flex;flex-direction:column;
 }
 .hero-eyebrow{
   font-size:0.78rem;font-weight:600;
@@ -74,9 +80,9 @@ nav{
 }
 .hero h1{
   font-family:Georgia,serif;
-  font-size:clamp(2.6rem,5.5vw,4.8rem);
+  font-size:clamp(2.2rem,4vw,4rem);
   font-weight:bold;line-height:1.1;
-  color:var(--brown);max-width:760px;
+  color:var(--brown);
   margin-bottom:1.8rem;
 }
 .hero h1 em{
@@ -84,13 +90,62 @@ nav{
 }
 .hero-sub{
   font-size:1.05rem;font-weight:300;
-  color:var(--brown-m);max-width:500px;
+  color:var(--brown-m);
   line-height:1.75;margin-bottom:3rem;
 }
 .hero-actions{
   display:flex;gap:1rem;flex-wrap:wrap;
   margin-bottom:3rem;
 }
+/* HERO VISUAL */
+.hero-visual{
+  display:flex;flex-direction:column;gap:1.2rem;
+}
+.hero-card{
+  background:var(--offwhite);
+  border:1px solid rgba(74,46,26,0.08);
+  border-radius:1.5rem;
+  padding:2rem 2.2rem;
+}
+.hero-card.accent{
+  background:var(--terra);
+  border-color:transparent;
+}
+.hero-stat{
+  font-family:Georgia,serif;
+  font-size:3.8rem;font-weight:bold;
+  color:var(--terra);line-height:1;
+  margin-bottom:0.3rem;
+}
+.hero-card.accent .hero-stat{color:white}
+.hero-stat-label{
+  font-size:0.9rem;font-weight:300;
+  color:var(--brown-m);line-height:1.5;
+}
+.hero-card.accent .hero-stat-label{color:rgba(255,255,255,0.8)}
+.hero-card-divider{
+  width:2rem;height:1px;
+  background:rgba(74,46,26,0.15);
+  margin:1.2rem 0;
+}
+.hero-card.accent .hero-card-divider{background:rgba(255,255,255,0.25)}
+.hero-mini-quote{
+  font-family:Georgia,serif;
+  font-size:0.97rem;font-style:italic;
+  color:var(--brown);line-height:1.55;
+  margin-bottom:0.6rem;
+}
+.hero-mini-author{
+  font-size:0.75rem;font-weight:600;
+  color:var(--brown-s);
+  text-transform:uppercase;letter-spacing:0.08em;
+}
+.hero-proof{
+  display:flex;align-items:center;gap:0.6rem;
+  font-size:0.85rem;font-weight:500;
+  color:var(--brown-m);
+}
+.hero-proof::before{content:'✦';color:var(--terra);font-size:0.7rem}
 .btn-primary{
   display:inline-block;
   background:var(--terra);color:white;
@@ -340,7 +395,9 @@ footer{
 }
 @media(max-width:860px){
   nav{padding:1rem 1.5rem}
-  .hero,.about,.offers,.promise,.testimonial,.cta-section{padding:5rem 1.5rem}
+  .hero{grid-template-columns:1fr;padding:7rem 1.5rem 4rem}
+  .hero-visual{display:none}
+  .about,.offers,.promise,.testimonial,.cta-section{padding:5rem 1.5rem}
   footer{padding:2rem 1.5rem}
   .about{grid-template-columns:1fr;gap:2.5rem}
   .offers-grid{grid-template-columns:1fr;max-width:420px;margin:0 auto}
@@ -357,14 +414,30 @@ footer{
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-eyebrow">Coaching &amp; consulting IA pour entrepreneurs passionnés</div>
-  <h1>Reprends le contrôle<br>de ton temps. Garde le <em>plaisir</em><br>d'entreprendre.</h1>
-  <p class="hero-sub">J'aide les entrepreneurs à apprivoiser l'IA — sans bullshit, sans te perdre dans les outils, en me concentrant uniquement sur ton besoin.</p>
-  <div class="hero-actions">
-    <a href="https://calendly.com/dberdoati/30min" target="_blank" rel="noopener noreferrer" class="btn-primary" aria-label="Réserver un appel gratuit de 30 minutes — offre de bienvenue">Réserver un appel gratuit de 30 min →</a>
-    <a href="#offres" class="btn-secondary">Voir les offres</a>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Coaching &amp; consulting IA pour entrepreneurs passionnés</div>
+    <h1>Reprends le contrôle<br>de ton temps. Garde le <em>plaisir</em><br>d'entreprendre.</h1>
+    <p class="hero-sub">J'aide les entrepreneurs à apprivoiser l'IA — sans bullshit, sans te perdre dans les outils, en me concentrant uniquement sur ton besoin.</p>
+    <div class="hero-actions">
+      <a href="https://calendly.com/dberdoati/30min" target="_blank" rel="noopener noreferrer" class="btn-primary" aria-label="Réserver un appel gratuit de 30 minutes — offre de bienvenue">Réserver un appel gratuit de 30 min →</a>
+      <a href="#offres" class="btn-secondary">Voir les offres</a>
+    </div>
+    <div class="hero-badge">Pourquoi moi ? 9 ans d'expérience avec l'IA dans le conseil en stratégie et transformation</div>
   </div>
-  <div class="hero-badge">Pourquoi moi ? 9 ans d'expérience avec l'IA dans le conseil en stratégie et transformation</div>
+  <div class="hero-visual">
+    <div class="hero-card accent">
+      <div class="hero-stat">9 ans</div>
+      <div class="hero-stat-label">d'expérience IA en conseil<br>stratégique (Capgemini Invent)</div>
+      <div class="hero-card-divider"></div>
+      <div class="hero-proof">Conseils actionnables en 48h</div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-mini-quote">"En 2 heures, j'ai identifié 3 tâches que je faisais manuellement depuis des mois. Le ROI était immédiat."</div>
+      <div class="hero-mini-author">— Entrepreneur lifestyle, e-commerce</div>
+      <div class="hero-card-divider"></div>
+      <div class="hero-proof">Supply chain · Procurement · Agentique</div>
+    </div>
+  </div>
 </section>
 
 <!-- ABOUT -->
