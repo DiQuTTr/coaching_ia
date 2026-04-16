@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture Agentique Ampli</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #faf8f5;
+            color: #2d2a26;
+            line-height: 1.7;
+        }
+        .header {
+            background: linear-gradient(135deg, #c46a4a, #d4836b);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        .header h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .header p { font-size: 1.1rem; opacity: 0.9; max-width: 700px; margin: 0 auto; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        .section h2 {
+            font-size: 1.5rem;
+            color: #c46a4a;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #f0e6df;
+        }
+        .section h3 {
+            font-size: 1.15rem;
+            color: #8b5e3c;
+            margin: 1.5rem 0 0.75rem 0;
+        }
+        .section p { margin-bottom: 0.75rem; }
+
+        .mermaid-container {
+            background: #fefcfa;
+            border: 1px solid #ede4db;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+        }
+
+        .agent-card {
+            border-left: 4px solid #c46a4a;
+            background: #fdf9f6;
+            border-radius: 0 8px 8px 0;
+            padding: 1.25rem 1.5rem;
+            margin: 1rem 0;
+        }
+        .agent-card.delivery { border-left-color: #5b8c5a; }
+        .agent-card.marketing { border-left-color: #c4a24a; }
+        .agent-card.acquisition { border-left-color: #5a7fb8; }
+        .agent-card.veille { border-left-color: #9b6bb8; }
+        .agent-card.orchestrateur { border-left-color: #c46a4a; }
+
+        .agent-card h4 {
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+        }
+        .agent-card .role { color: #777; font-style: italic; margin-bottom: 0.5rem; }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin: 2px 3px;
+            font-weight: 500;
+        }
+        .tag-tool { background: #e8f5e9; color: #2e7d32; }
+        .tag-capability { background: #e3f2fd; color: #1565c0; }
+        .tag-protocol { background: #f3e5f5; color: #7b1fa2; }
+        .tag-data { background: #fff3e0; color: #e65100; }
+
+        .flow-step {
+            display: flex;
+            align-items: flex-start;
+            margin: 0.75rem 0;
+        }
+        .flow-number {
+            background: #c46a4a;
+            color: white;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-right: 12px;
+            margin-top: 2px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.95rem;
+        }
+        th {
+            background: #f5ede6;
+            color: #6b4c3b;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 600;
+        }
+        td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #f0e6df;
+        }
+        tr:hover td { background: #fdf9f6; }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .priority-1 { background: #ffcdd2; color: #b71c1c; }
+        .priority-2 { background: #fff9c4; color: #f57f17; }
+        .priority-3 { background: #c8e6c9; color: #2e7d32; }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .tech-item {
+            background: #fdf9f6;
+            border: 1px solid #ede4db;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        .tech-item h5 { color: #c46a4a; margin-bottom: 0.4rem; font-size: 0.95rem; }
+        .tech-item p { font-size: 0.88rem; color: #666; margin: 0; }
+
+        .glossary { font-size: 0.9rem; }
+        .glossary dt { font-weight: 600; color: #8b5e3c; margin-top: 0.5rem; }
+        .glossary dd { margin-left: 1rem; margin-bottom: 0.5rem; color: #555; }
+
+        .callout {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Architecture Agentique Ampli</h1>
+    <p>Systeme multi-agents pour l'automatisation et l'augmentation d'une activite de consulting IA</p>
+</div>
+
+<div class="container">
+
+<!-- ===================== VISION ===================== -->
+<div class="section">
+    <h2>1. Vision et principes directeurs</h2>
+    <p>Ce document definit l'architecture fonctionnelle d'un systeme multi-agents concu pour supporter les quatre piliers operationnels d'Ampli : delivery client, marketing & communication, acquisition & prospection, et contenu & veille.</p>
+
+    <h3>Principes fondamentaux</h3>
+    <p><strong>Specialisation par domaine</strong> : chaque domaine metier dispose de son propre agent superviseur et de sous-agents specialises. Cela permet a chaque agent de maitriser son perimetre et de disposer des bons outils.</p>
+    <p><strong>Orchestration centralisee</strong> : un agent superviseur global (l'Orchestrateur) recoit les demandes, identifie le domaine concerne, et delegue au bon agent. Il gere aussi les workflows transversaux.</p>
+    <p><strong>Communication standardisee</strong> : les agents communiquent entre eux via des protocoles ouverts (MCP pour l'acces aux outils, A2A pour la coordination inter-agents), ce qui permet d'evoluer chaque brique independamment.</p>
+    <p><strong>Notion comme hub central</strong> : toutes les donnees structurees (clients, prospects, contenu, veille, facturation) vivent dans Notion, qui sert de source de verite partagee entre les agents.</p>
+    <p><strong>Progressive et incrementale</strong> : le systeme se construit par couches, en commencant par les automatisations les plus impactantes.</p>
+</div>
+
+<!-- ===================== VUE D'ENSEMBLE ===================== -->
+<div class="section">
+    <h2>2. Vue d'ensemble de l'architecture</h2>
+    <div class="mermaid-container">
+        <div class="mermaid">
+graph TB
+    subgraph UI["Interface Diane"]
+        CLI["Claude Code<br/>(Terminal)"]
+        CHAT["Claude Chat<br/>(Cowork)"]
+        MAKE["Make<br/>(Triggers auto)"]
+    end
+
+    subgraph ORCH["Orchestrateur Ampli"]
+        SUPER["Agent Superviseur<br/>Route, priorise, coordonne"]
+        ROUTER["Routeur de taches<br/>Classification intention"]
+        MEMORY["Memoire partagee<br/>Contexte cross-domaine"]
+    end
+
+    subgraph AGENTS["Agents Domaine"]
+        DEL["Agent Delivery"]
+        MKT["Agent Marketing"]
+        ACQ["Agent Acquisition"]
+        VEI["Agent Veille"]
+    end
+
+    subgraph DATA["Couche Donnees"]
+        NOTION["Notion<br/>(Hub central)"]
+        DRIVE["Google Drive<br/>(Documents)"]
+        VDB["Base vectorielle<br/>(RAG)"]
+    end
+
+    subgraph TOOLS["Couche Outils (MCP)"]
+        EMAIL["Gmail API"]
+        CAL["Calendly"]
+        LI["LinkedIn"]
+        IG["Instagram"]
+        FEEDLY["Feedly"]
+    end
+
+    CLI --> SUPER
+    CHAT --> SUPER
+    MAKE --> SUPER
+
+    SUPER --> ROUTER
+    ROUTER --> DEL
+    ROUTER --> MKT
+    ROUTER --> ACQ
+    ROUTER --> VEI
+    SUPER --- MEMORY
+
+    DEL <-->|A2A| ACQ
+    MKT <-->|A2A| VEI
+    DEL <-->|A2A| MKT
+
+    DEL -->|MCP| NOTION
+    DEL -->|MCP| DRIVE
+    MKT -->|MCP| NOTION
+    ACQ -->|MCP| NOTION
+    VEI -->|MCP| NOTION
+    VEI -->|MCP| VDB
+
+    DEL -->|MCP| EMAIL
+    ACQ -->|MCP| CAL
+    ACQ -->|MCP| LI
+    MKT -->|MCP| IG
+    MKT -->|MCP| LI
+    VEI -->|MCP| FEEDLY
+
+    style SUPER fill:#c4564a,stroke:#a04030,color:#fff
+    style DEL fill:#5b8c5a,stroke:#3d6b3c,color:#fff
+    style MKT fill:#c4a24a,stroke:#a08030,color:#fff
+    style ACQ fill:#5a7fb8,stroke:#3d5f9b,color:#fff
+    style VEI fill:#9b6bb8,stroke:#7d4d9b,color:#fff
+    style NOTION fill:#e0d5c5,stroke:#b0a090
+    style VDB fill:#e0d5c5,stroke:#b0a090
+        </div>
+    </div>
+</div>
+
+<!-- ===================== ORCHESTRATEUR ===================== -->
+<div class="section">
+    <h2>3. Agent Orchestrateur (Superviseur Global)</h2>
+
+    <div class="agent-card orchestrateur">
+        <h4>Orchestrateur Ampli</h4>
+        <p class="role">Point d'entree unique — comprend l'intention, route vers le bon domaine, coordonne les workflows multi-domaines</p>
+        <p>
+            <span class="tag tag-protocol">MCP Server</span>
+            <span class="tag tag-protocol">A2A Coordinator</span>
+            <span class="tag tag-capability">Intent Classification</span>
+            <span class="tag tag-capability">Task Decomposition</span>
+            <span class="tag tag-data">Memoire conversationnelle</span>
+        </p>
+    </div>
+
+    <h3>Responsabilites</h3>
+    <p><strong>Classification d'intention</strong> : quand tu formules une demande ("prepare le diagnostic pour le client X", "publie le post LinkedIn de mercredi"), l'orchestrateur identifie le domaine et le sous-agent concernes.</p>
+    <p><strong>Decomposition de taches complexes</strong> : une demande comme "prepare la session client de demain" implique plusieurs domaines (delivery pour le diagnostic, acquisition pour l'historique prospect, veille pour les tendances sectorielles). L'orchestrateur decompose et coordonne.</p>
+    <p><strong>Memoire cross-domaine</strong> : il maintient le contexte entre les domaines — par exemple, un retour client positif (delivery) peut declencher une demande de temoignage (marketing).</p>
+
+    <h3>Workflow type de l'orchestrateur</h3>
+    <div class="mermaid-container">
+        <div class="mermaid">
+sequenceDiagram
+    participant D as Diane
+    participant O as Orchestrateur
+    participant R as Routeur
+    participant A as Agent Domaine
+    participant T as Outils (MCP)
+
+    D->>O: "Prepare-moi la session client de demain pour Sophie"
+    O->>R: Classification intention
+    R-->>O: [Delivery] + [Acquisition]
+    O->>A: Agent Delivery: generer diagnostic
+    O->>A: Agent Acquisition: recuperer historique prospect
+    A->>T: Notion API: fiche client Sophie
+    A->>T: Google Drive: documents secteur
+    T-->>A: Donnees recuperees
+    A-->>O: Diagnostic + contexte prets
+    O-->>D: "Voici ton dossier de preparation"
+        </div>
+    </div>
+</div>
+
+<!-- ===================== AGENT DELIVERY ===================== -->
+<div class="section">
+    <h2>4. Agent Delivery Client</h2>
+
+    <div class="agent-card delivery">
+        <h4>Agent Delivery</h4>
+        <p class="role">Prepare, produit et suit les livrables client — du diagnostic a la facturation</p>
+        <p>
+            <span class="tag tag-tool">Notion</span>
+            <span class="tag tag-tool">Google Drive</span>
+            <span class="tag tag-tool">Gmail</span>
+            <span class="tag tag-tool">PowerPoint</span>
+            <span class="tag tag-capability">Document Retrieval</span>
+            <span class="tag tag-capability">Chunking & Parsing</span>
+            <span class="tag tag-capability">Text Generation</span>
+            <span class="tag tag-capability">Template Engine</span>
+        </p>
+    </div>
+
+    <h3>Sous-agents</h3>
+
+    <table>
+        <tr>
+            <th>Sous-agent</th>
+            <th>Role</th>
+            <th>Outils & Capabilities</th>
+        </tr>
+        <tr>
+            <td><strong>Diagnostic Builder</strong></td>
+            <td>Genere le dossier de preparation client : synthese pain profile, quick wins IA priorises, zones de risque, questions ciblees</td>
+            <td>
+                <span class="tag tag-capability">RAG</span>
+                <span class="tag tag-capability">Text Generation</span>
+                <span class="tag tag-tool">Notion</span>
+                <span class="tag tag-capability">Parsing</span>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Livrable Builder</strong></td>
+            <td>Produit les livrables PowerPoint (Bain-style : titres-conclusions, palette 2 couleurs, pas d'emojis) et les documents de restitution</td>
+            <td>
+                <span class="tag tag-capability">Template Engine</span>
+                <span class="tag tag-tool">PowerPoint</span>
+                <span class="tag tag-tool">Google Drive</span>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Follow-up Agent</strong></td>
+            <td>Envoie les recaps post-session, planifie les relances, met a jour le statut client dans Notion</td>
+            <td>
+                <span class="tag tag-tool">Gmail</span>
+                <span class="tag tag-tool">Notion</span>
+                <span class="tag tag-tool">Calendly</span>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Knowledge Curator</strong></td>
+            <td>Maintient la base de connaissances sectorielle : indexe les audits passes, les retours clients, les patterns recurrents</td>
+            <td>
+                <span class="tag tag-capability">Document Retrieval</span>
+                <span class="tag tag-capability">Chunking</span>
+                <span class="tag tag-data">Base vectorielle</span>
+            </td>
+        </tr>
+    </table>
+
+    <h3>Workflows cles</h3>
+    <div class="flow-step">
+        <div class="flow-number">1</div>
+        <div><strong>Preparation session client</strong> : recuperation fiche Notion + historique echanges + donnees secteur → generation diagnostic 4 parties → production Apercu Diagnostic PDF → stockage Drive</div>
+    </div>
+    <div class="flow-step">
+        <div class="flow-number">2</div>
+        <div><strong>Production livrable</strong> : template PPTX Bain-style + donnees diagnostic → generation slides → review Diane → export final</div>
+    </div>
+    <div class="flow-step">
+        <div class="flow-number">3</div>
+        <div><strong>Suivi post-session</strong> : notes de session → email recap auto → mise a jour Notion (statut, next steps) → programmation relance J+7</div>
+    </div>
+</div>
+
+<!-- ===================== AGENT MARKETING ===================== -->
+<div class="section">
+    <h2>5. Agent Marketing & Communication</h2>
+
+    <div class="agent-card marketing">
+        <h4>Agent Marketing</h4>
+        <p class="role">Cree, planifie et publie le contenu sur Instagram et LinkedIn — maintient la coherence editoriale</p>
+        <p>
+            <span class="tag tag-tool">Instagram API</span>
+            <span class="tag tag-tool">LinkedIn API</span>
+            <span class="tag tag-tool">Notion</span>
+            <span class="tag tag-capability">Text Generation</span>
+            <span class="tag tag-capability">Image Description</span>
+            <span class="tag tag-capability">Calendar Management</span>
+        </p>
+    </div>
+
+    <h3>Sous-agents</h3>
+
+    <table>
+        <tr>
+            <th>Sous-agent</th>
+            <th>Role</th>
+            <th>Outils & Capabilities</th>
+        </tr>
+        <tr>
+            <td><strong>Content Creator</strong></td>
+            <td>Genere les posts (carousels Instagram, posts LinkedIn) dans le ton Diane : chaud, personnel, pratique, sans clickbait</td>
+            <td>
+                <span class="tag tag-capability">Text Generation</span>
+                <span class="tag tag-capability">Tone Matching</span>
+                <span class="tag tag-data">Charte editoriale</span>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Calendar Manager</strong></td>
+            <td>Gere le calendrier de publication (3 posts/semaine Lun/Mer/Ven), planifie les contenus thematiques, alerte sur les trous</td>
+            <td>
+                <span class="tag tag-tool">Notion</span>
+                <span class="tag tag-capability">Scheduling</span>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Performance Tracker</strong></td>
+            <td>Collecte les metriques d'engagement, identifie les contenus qui performent, ajuste la strategie editoriale</td>
+            <td>
+                <span class="tag tag-tool">Instagram API</span>
+                <span class="tag tag-tool">LinkedIn API</span>
+                <span class="tag tag-capability">Analytics</span>
+            </td>
+        </tr>
+    </table>
+
+    <h3>Interactions A2A</h3>
+    <p>Cet agent collabore etroitement avec l'Agent Veille pour transformer les insights de veille en contenu publiable, et avec l'Agent Delivery pour recycler les retours clients en temoignages ou etudes de cas.</p>
+</div>
+
+<!-- ===================== AGENT ACQUISITION ===================== -->
+<div class="section">
+    <h2>6. Agent Acquisition & Prospection</h2>
+
+    <div class="agent-card acquisition">
+        <h4>Agent Acquisition</h4>
+        <p class="role">Identifie, qualifie et suit les prospects — du premier contact a la conversion en client</p>
+        <p>
+            <span class="tag tag-tool">LinkedIn</span>
+            <span class="tag tag-tool">Calendly</span>
+            <span class="tag tag-tool">Notion CRM</span>
+            <span class="tag tag-tool">Gmail</span>
+            <span class="tag tag-capability">Lead Scoring</span>
+            <span class="tag tag-capability">Text to SQL</span>
+            <span class="tag tag-capability">Personalization</span>
+        </p>
+    </div>
+
+    <h3>Sous-agents</h3>
+
+    <table>
+        <tr>
+            <th>Sous-agent</th>
+            <th>Role</th>
+            <th>Outils & Capabilities</th>
+        </tr>
+        <tr>
+            <td><strong>Lead Qualifier</strong></td>
+            <td>Evalue les prospects entrants (formulaire site, DM Instagram, Calendly) selon des criteres definis : taille entreprise, secteur, maturite IA, budget estime</td>
+            <td>
+                <span class="tag tag-capability">Lead Scoring</span>
+                <span class="tag tag-capability">Text Classification</span>
+                <span class="tag tag-tool">Notion</span>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Outreach Agent</strong></td>
+            <td>Genere les messages de prospection personnalises LinkedIn, les emails de relance, les follow-ups post-discovery call</td>
+            <td>
+                <span class="tag tag-capability">Personalization</span>
+                <span class="tag tag-tool">LinkedIn</span>
+                <span class="tag tag-tool">Gmail</span>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Pipeline Manager</strong></td>
+            <td>Met a jour le CRM Notion, suit le pipeline (lead → prospect → discovery → client), genere les rapports de conversion</td>
+            <td>
+                <span class="tag tag-tool">Notion</span>
+                <span class="tag tag-capability">Text to SQL</span>
+                <span class="tag tag-capability">Reporting</span>
+            </td>
+        </tr>
+    </table>
+
+    <h3>Pipeline de conversion</h3>
+    <div class="mermaid-container">
+        <div class="mermaid">
+graph LR
+    A["Lead entrant<br/>(Site/LinkedIn/IG)"] -->|Qualification auto| B["Prospect qualifie"]
+    B -->|Outreach personnalise| C["Discovery call<br/>bookee"]
+    C -->|Apercu Diagnostic| D["Session payante<br/>bookee"]
+    D -->|Delivery| E["Client actif"]
+    E -->|Satisfaction| F["Retainer /<br/>Temoignage"]
+
+    style A fill:#e3f2fd,stroke:#5a7fb8
+    style B fill:#e3f2fd,stroke:#5a7fb8
+    style C fill:#e8f5e9,stroke:#5b8c5a
+    style D fill:#e8f5e9,stroke:#5b8c5a
+    style E fill:#fff3e0,stroke:#c4a24a
+    style F fill:#fff3e0,stroke:#c4a24a
+        </div>
+    </div>
+</div>
+
+<!-- ===================== AGENT VEILLE ===================== -->
+<div class="section">
+    <h2>7. Agent Contenu & Veille</h2>
+
+    <div class="agent-card veille">
+        <h4>Agent Veille</h4>
+        <p class="role">Surveille l'ecosysteme IA, structure les insights et alimente les autres agents en connaissance fraiche</p>
+        <p>
+            <span class="tag tag-tool">Feedly</span>
+            <span class="tag tag-tool">Notion</span>
+            <span class="tag tag-data">Base vectorielle</span>
+            <span class="tag tag-capability">Document Retrieval</span>
+            <span class="tag tag-capability">Chunking</span>
+            <span class="tag tag-capability">Summarization</span>
+            <span class="tag tag-capability">Trend Detection</span>
+        </p>
+    </div>
+
+    <h3>Sous-agents</h3>
+
+    <table>
+        <tr>
+            <th>Sous-agent</th>
+            <th>Role</th>
+            <th>Outils & Capabilities</th>
+        </tr>
+        <tr>
+            <td><strong>Feed Monitor</strong></td>
+            <td>Scrape les flux Feedly (5 boards thematiques), Google Alerts, newsletters (The Rundown AI, Ben's Bites), Reddit, YouTube</td>
+            <td>
+                <span class="tag tag-tool">Feedly</span>
+                <span class="tag tag-capability">RSS Parsing</span>
+                <span class="tag tag-capability">Web Scraping</span>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Insight Extractor</strong></td>
+            <td>Analyse les articles, extrait les points cles, categorise par theme (outils IA, reglementation, use cases sectoriels, tendances)</td>
+            <td>
+                <span class="tag tag-capability">Chunking</span>
+                <span class="tag tag-capability">Summarization</span>
+                <span class="tag tag-capability">Classification</span>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Knowledge Indexer</strong></td>
+            <td>Indexe les insights dans la base vectorielle pour le RAG, met a jour la base Notion Veille, detecte les tendances emergentes</td>
+            <td>
+                <span class="tag tag-data">Base vectorielle</span>
+                <span class="tag tag-tool">Notion</span>
+                <span class="tag tag-capability">Embedding</span>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Brief Generator</strong></td>
+            <td>Produit un brief quotidien/hebdomadaire des tendances pour Diane + identifie les sujets transformables en contenu</td>
+            <td>
+                <span class="tag tag-capability">Summarization</span>
+                <span class="tag tag-capability">Trend Detection</span>
+            </td>
+        </tr>
+    </table>
+
+    <h3>Pipeline Veille → Contenu</h3>
+    <div class="mermaid-container">
+        <div class="mermaid">
+graph LR
+    A["Sources<br/>(Feedly, Newsletters,<br/>Reddit, YouTube)"] -->|Feed Monitor| B["Articles bruts"]
+    B -->|Insight Extractor| C["Insights structures<br/>& categorises"]
+    C -->|Knowledge Indexer| D["Base vectorielle<br/>+ Notion"]
+    C -->|Brief Generator| E["Brief Diane<br/>(quotidien)"]
+    D -->|RAG| F["Enrichissement<br/>diagnostics client"]
+    E -->|A2A → Marketing| G["Posts LinkedIn<br/>& Instagram"]
+
+    style A fill:#f3e5f5,stroke:#9b6bb8
+    style D fill:#f3e5f5,stroke:#9b6bb8
+    style G fill:#fff9c4,stroke:#c4a24a
+    style F fill:#e8f5e9,stroke:#5b8c5a
+        </div>
+    </div>
+</div>
+
+<!-- ===================== PROTOCOLES ===================== -->
+<div class="section">
+    <h2>8. Protocoles de communication</h2>
+
+    <h3>MCP (Model Context Protocol) — Acces aux outils</h3>
+    <p>Chaque outil externe (Notion, Gmail, Calendly, LinkedIn, etc.) est expose comme un <strong>serveur MCP</strong>. Les agents n'appellent jamais directement les APIs : ils passent par des MCP servers standardises qui gerent l'authentification, le rate limiting et le format des donnees.</p>
+
+    <div class="callout">
+        <strong>Pourquoi MCP ?</strong> C'est le protocole ouvert d'Anthropic, deja supporte nativement par Claude Code et Cowork. Tu peux ajouter de nouveaux outils sans modifier le code des agents — il suffit d'ajouter un nouveau MCP server.
+    </div>
+
+    <h3>A2A (Agent-to-Agent Protocol) — Coordination inter-agents</h3>
+    <p>Quand un agent a besoin d'un autre agent (ex : l'Agent Veille envoie un insight a l'Agent Marketing pour en faire un post), ils communiquent via le protocole <strong>A2A</strong> de Google. Chaque agent expose une "Agent Card" qui decrit ses capacites, et peut envoyer/recevoir des taches structurees.</p>
+
+    <div class="mermaid-container">
+        <div class="mermaid">
+graph TB
+    subgraph MCP_LAYER["Couche MCP (Outils)"]
+        MCP1["MCP Notion"]
+        MCP2["MCP Gmail"]
+        MCP3["MCP Calendly"]
+        MCP4["MCP LinkedIn"]
+        MCP5["MCP Feedly"]
+        MCP6["MCP Drive"]
+    end
+
+    subgraph A2A_LAYER["Couche A2A (Coordination)"]
+        DEL["Agent Delivery"]
+        MKT["Agent Marketing"]
+        ACQ["Agent Acquisition"]
+        VEI["Agent Veille"]
+    end
+
+    DEL ---|"Demande temoignage"| MKT
+    VEI ---|"Insight → post"| MKT
+    ACQ ---|"Prospect → diagnostic"| DEL
+    DEL ---|"Client satisfait → referral"| ACQ
+
+    DEL --> MCP1
+    DEL --> MCP2
+    DEL --> MCP6
+    MKT --> MCP1
+    MKT --> MCP4
+    ACQ --> MCP1
+    ACQ --> MCP3
+    ACQ --> MCP4
+    VEI --> MCP1
+    VEI --> MCP5
+
+    style MCP_LAYER fill:#f5f5f5,stroke:#ccc
+    style A2A_LAYER fill:#fdf9f6,stroke:#ede4db
+        </div>
+    </div>
+
+    <h3>Matrice des communications A2A</h3>
+    <table>
+        <tr>
+            <th>De → Vers</th>
+            <th>Delivery</th>
+            <th>Marketing</th>
+            <th>Acquisition</th>
+            <th>Veille</th>
+        </tr>
+        <tr>
+            <td><strong>Delivery</strong></td>
+            <td>—</td>
+            <td>Demande temoignage, etude de cas</td>
+            <td>Signal client satisfait pour referral</td>
+            <td>Demande insight sectoriel</td>
+        </tr>
+        <tr>
+            <td><strong>Marketing</strong></td>
+            <td>Contenu valorisant un livrable</td>
+            <td>—</td>
+            <td>Lead genere par contenu</td>
+            <td>Demande sujet tendance</td>
+        </tr>
+        <tr>
+            <td><strong>Acquisition</strong></td>
+            <td>Nouveau client → prep diagnostic</td>
+            <td>—</td>
+            <td>—</td>
+            <td>Contexte sectoriel prospect</td>
+        </tr>
+        <tr>
+            <td><strong>Veille</strong></td>
+            <td>Enrichissement base connaissance</td>
+            <td>Insight transformable en post</td>
+            <td>—</td>
+            <td>—</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ===================== STACK TECHNIQUE ===================== -->
+<div class="section">
+    <h2>9. Stack technique recommandee</h2>
+
+    <div class="tech-stack">
+        <div class="tech-item">
+            <h5>Runtime Agents</h5>
+            <p><strong>Claude Code + Claude Agent SDK</strong> (Python/TypeScript) — pour creer et orchestrer les agents avec les modeles Claude</p>
+        </div>
+        <div class="tech-item">
+            <h5>LLM</h5>
+            <p><strong>Claude Sonnet 4</strong> pour les sous-agents (rapide, economique), <strong>Claude Opus 4</strong> pour l'orchestrateur (raisonnement complexe)</p>
+        </div>
+        <div class="tech-item">
+            <h5>MCP Servers</h5>
+            <p>Serveurs MCP existants ou custom pour Notion, Gmail, Calendly, LinkedIn, Feedly, Google Drive</p>
+        </div>
+        <div class="tech-item">
+            <h5>Base vectorielle</h5>
+            <p><strong>ChromaDB</strong> ou <strong>Qdrant</strong> — stockage local des embeddings pour le RAG (veille, connaissances sectorielles)</p>
+        </div>
+        <div class="tech-item">
+            <h5>Orchestration</h5>
+            <p><strong>Make</strong> pour les triggers automatiques (Gmail watch, webhooks) + <strong>Claude Agent SDK</strong> pour l'orchestration intelligente</p>
+        </div>
+        <div class="tech-item">
+            <h5>Hub donnees</h5>
+            <p><strong>Notion</strong> — CRM clients, pipeline prospects, calendrier editorial, base veille, suivi facturation</p>
+        </div>
+        <div class="tech-item">
+            <h5>Hebergement</h5>
+            <p><strong>Local d'abord</strong> (ta machine), puis migration possible vers un VPS (Hetzner, Railway) quand le volume augmente</p>
+        </div>
+        <div class="tech-item">
+            <h5>Versionning</h5>
+            <p><strong>GitHub</strong> — code des agents, configs MCP, prompts systeme, templates de livrables</p>
+        </div>
+    </div>
+
+    <div class="callout">
+        <strong>Approche pragmatique</strong> : tu n'as pas besoin de tout construire d'un coup. Claude Code te permet de developper chaque agent incrementalement, de le tester, puis de le connecter aux autres. Make reste precieux pour les triggers automatiques simples (emails, webhooks Calendly).
+    </div>
+</div>
+
+<!-- ===================== CAPABILITIES ===================== -->
+<div class="section">
+    <h2>10. Capacites techniques transversales</h2>
+
+    <p>Certaines capacites sont partagees entre plusieurs agents. Voici comment elles s'implementent dans le systeme :</p>
+
+    <table>
+        <tr>
+            <th>Capacite</th>
+            <th>Description</th>
+            <th>Agents concernes</th>
+            <th>Implementation</th>
+        </tr>
+        <tr>
+            <td><strong>Document Retrieval</strong></td>
+            <td>Recuperer des documents depuis Notion, Drive ou la base vectorielle en fonction d'une requete</td>
+            <td>Delivery, Veille</td>
+            <td>MCP Notion + MCP Drive + recherche vectorielle</td>
+        </tr>
+        <tr>
+            <td><strong>Chunking & Parsing</strong></td>
+            <td>Decouper des documents longs (articles, rapports) en segments exploitables pour l'analyse ou l'indexation</td>
+            <td>Veille, Delivery</td>
+            <td>Librairie de chunking (LangChain ou custom) avec strategies par type de doc</td>
+        </tr>
+        <tr>
+            <td><strong>Text to SQL</strong></td>
+            <td>Transformer des questions en langage naturel en requetes sur les bases Notion (ex : "combien de prospects en mars ?")</td>
+            <td>Acquisition, Orchestrateur</td>
+            <td>Agent specialise avec schema Notion mappe + generation de filtres API Notion</td>
+        </tr>
+        <tr>
+            <td><strong>RAG (Retrieval Augmented Generation)</strong></td>
+            <td>Enrichir les reponses des agents avec des connaissances contextuelles issues de la base vectorielle</td>
+            <td>Delivery, Veille, Marketing</td>
+            <td>ChromaDB/Qdrant + embeddings Claude + recherche semantique</td>
+        </tr>
+        <tr>
+            <td><strong>Template Engine</strong></td>
+            <td>Generer des documents (PPTX, PDF, emails) a partir de templates pre-definis + donnees dynamiques</td>
+            <td>Delivery, Acquisition</td>
+            <td>python-pptx, reportlab, Jinja2 pour les templates</td>
+        </tr>
+        <tr>
+            <td><strong>Tone Matching</strong></td>
+            <td>Garantir que tout contenu genere respecte le ton Diane : chaud, personnel, expert, sans clickbait ni jargon</td>
+            <td>Marketing, Acquisition</td>
+            <td>System prompts avec exemples + charte editoriale en RAG</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ===================== ROADMAP ===================== -->
+<div class="section">
+    <h2>11. Roadmap de deploiement</h2>
+
+    <p>Construction progressive en 4 phases, chaque phase apportant de la valeur immediate :</p>
+
+    <table>
+        <tr>
+            <th>Phase</th>
+            <th>Perimetre</th>
+            <th>Agents actives</th>
+            <th>Valeur immediate</th>
+            <th>Duree estimee</th>
+        </tr>
+        <tr>
+            <td><span class="priority-badge priority-1">Phase 1</span></td>
+            <td><strong>Fondations + Delivery</strong><br/>Setup Claude Code, MCP Notion, Agent Delivery (Diagnostic Builder + Follow-up)</td>
+            <td>Orchestrateur (basique) + Delivery</td>
+            <td>Preparation client 3x plus rapide, suivi post-session automatise</td>
+            <td>2-3 semaines</td>
+        </tr>
+        <tr>
+            <td><span class="priority-badge priority-1">Phase 2</span></td>
+            <td><strong>Acquisition</strong><br/>MCP Calendly + LinkedIn, Pipeline Manager, Lead Qualifier</td>
+            <td>+ Acquisition</td>
+            <td>CRM auto-alimente, prospection personnalisee, zero saisie manuelle</td>
+            <td>2-3 semaines</td>
+        </tr>
+        <tr>
+            <td><span class="priority-badge priority-2">Phase 3</span></td>
+            <td><strong>Veille & RAG</strong><br/>MCP Feedly, base vectorielle, Feed Monitor, Insight Extractor, pipeline RAG</td>
+            <td>+ Veille</td>
+            <td>Brief quotidien automatique, diagnostics enrichis par la veille</td>
+            <td>3-4 semaines</td>
+        </tr>
+        <tr>
+            <td><span class="priority-badge priority-3">Phase 4</span></td>
+            <td><strong>Marketing & A2A complet</strong><br/>Content Creator, Calendar Manager, connexions A2A entre tous les agents</td>
+            <td>+ Marketing (systeme complet)</td>
+            <td>Contenu genere depuis la veille, publication semi-automatisee, systeme autonome</td>
+            <td>3-4 semaines</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ===================== GLOSSAIRE ===================== -->
+<div class="section">
+    <h2>12. Glossaire</h2>
+    <dl class="glossary">
+        <dt>MCP (Model Context Protocol)</dt>
+        <dd>Protocole ouvert d'Anthropic permettant aux LLMs d'acceder a des outils externes de maniere standardisee. Chaque outil est un "serveur MCP" que les agents peuvent appeler.</dd>
+
+        <dt>A2A (Agent-to-Agent Protocol)</dt>
+        <dd>Protocole de Google pour la communication entre agents IA. Chaque agent publie une "Agent Card" decrivant ses capacites, et peut envoyer/recevoir des taches structurees a d'autres agents.</dd>
+
+        <dt>RAG (Retrieval Augmented Generation)</dt>
+        <dd>Technique qui enrichit les reponses d'un LLM en recuperant d'abord des documents pertinents dans une base de connaissances, puis en les injectant dans le contexte.</dd>
+
+        <dt>Base vectorielle</dt>
+        <dd>Base de donnees specialisee qui stocke des textes sous forme de vecteurs numeriques (embeddings), permettant la recherche par similarite semantique.</dd>
+
+        <dt>Chunking</dt>
+        <dd>Decoupage d'un document long en segments de taille optimale pour l'indexation ou le traitement par un LLM.</dd>
+
+        <dt>Claude Agent SDK</dt>
+        <dd>Kit de developpement d'Anthropic pour creer des agents autonomes bases sur Claude, avec gestion des outils, de la memoire et de l'orchestration.</dd>
+
+        <dt>Claude Code</dt>
+        <dd>Outil en ligne de commande d'Anthropic permettant de developper du code avec Claude directement depuis le terminal.</dd>
+
+        <dt>Embedding</dt>
+        <dd>Representation numerique d'un texte sous forme de vecteur, capturant son sens semantique pour permettre la comparaison et la recherche.</dd>
+
+        <dt>Text to SQL</dt>
+        <dd>Capacite a transformer une question en langage naturel en requete structuree sur une base de donnees.</dd>
+    </dl>
+</div>
+
+</div>
+
+<script>
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'neutral',
+        themeVariables: {
+            primaryColor: '#fdf9f6',
+            primaryBorderColor: '#c4a080',
+            lineColor: '#8b7b6b',
+            textColor: '#2d2a26',
+            fontSize: '14px'
+        },
+        flowchart: {
+            useMaxWidth: true,
+            htmlLabels: true,
+            curve: 'basis'
+        },
+        sequence: {
+            useMaxWidth: true
+        }
+    });
+</script>
+
+</body>
+</html>
